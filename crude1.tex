@@ -1,0 +1,619 @@
+\input cwebmac
+
+
+
+
+
+
+\font\sixteenrm =cmr10  scaled 1600  % fifteen point roman
+\font\ninerm    =cmr10  scaled  900  % nine point roman
+
+\datethis
+\null
+\bigskip
+\centerline{\sixteenrm Source Terminal Network Unreliability Estimation}
+\smallskip
+\centerline{\sixteenrm by Crude Monte Carlo (1)}
+\smallskip
+\centerline{v1.1}
+\smallskip
+\centerline{\ninerm Leslie Murray}
+\vskip 0pt
+\centerline{\ninerm Universidad Nacional de Rosario}
+\bigskip
+
+An undirected graph $G=(V,E)$, where $V$ is a set of $n$ absolutely reliable
+nodes and $E$ a set of $m$ independent unreliable links, is a frequently used
+model for studying communication network reliability. Being $X_i=1$ when the
+$i^{th}$ link is {\it operative} and $X_i=0$ when the $i^{th}$ link is
+{\it failed}, vector ${\bf X}=(X_1,X_2,\cdots,X_m)$ denotes the state of the
+links and, thereby, the state of the whole network. The single link reliability
+is defined as $r_i=P[X_i=1]$ whereas the single link unreliability as
+$q_i=1-r_i=P[X_i=0]$.
+
+$\Phi({\bf X})$ is called structure function, a function that equals $1$ when
+the network is {\it operative} and $0$ when the network is {\it failed}. In
+this program $\Phi({\bf X})$ is associated to the source--terminal network
+reliability model in which the network is considered {\it operative} if there
+is a path of {\it operative} links between two nodes $s$ and $t$, and
+{\it failed} if there is no path of {\it operative} links between nodes $s$ and
+$t$. By means of this function, the network reliability $R$ and unreliability
+$Q$ are defined, respectively, as $R=P[\Phi({\bf X})=1]$ and
+$Q=P[\Phi({\bf X})=0]$.
+
+Straightforward (also called Standard, Direct or Crude) Monte Carlo estimations
+of the network reliability and unreliability can be computed, respectively, as
+$\widehat{R} = 1/N \sum_{i=1}^{N} \Phi({\bf X}^{(i)})$ and $\widehat{Q} = 1/N
+\sum_{i=1}^{N}(1-\Phi({\bf X}^{(i)})$ where ${\bf X}^{(i)},\ i=1,\cdots,N$ are
+{\it i.i.d.} samples taken from $f_{{\bf X}}({\bf x})$: the probability mass
+function of vector ${\bf X}$. For highly reliable networks most of the
+$X^{(i)}$
+samples will equal $1$ and, as a consequence, most of the replications
+$\Phi({\bf X}^{(i)})$ will equal $1$ also. For extremely reliable networks,
+with
+unreliabilities in the order of $10^{-10}$ or even less, it will take an
+average
+of $10^{10}$ replications to get $\Phi({\bf X}^{(i)})=0$ at least once. For
+these networks $\Phi({\bf X})=0$ is a rare event.
+
+The accuracy of the unreliability estimation can be assessed by means of a
+relative error defined as $V\{\widehat{Q}\}^{1/2}/E\{\widehat{Q}\}$, that in
+the
+case of Crude Monte Carlo takes the form $((1-Q)/NQ)^{1/2}\approx(1/NQ)^{1/2}$.
+This shows a weakness of the method for the case of highly reliable networks
+($Q
+$ very low) and the reason why accurate estimations require a high number of
+replications ($N$ very high).
+
+As for the program $E\{\widehat{Q}\}$ and $V\{\widehat{Q}\}$ are both unknown,
+the following unmbiased estimators are calculated, instead:
+\smallskip
+\centerline{$1/N\sum_{i=1}^{N}(1-\Phi({\bf X}^{(i)})$ \ \ \ for \ \ \ $E
+\{\widehat{Q}\}$}
+\smallskip
+\centerline{$\sum_{i=1}^{N}(1-\Phi({\bf X}^{(i)})^2/(N(N-1))-\left(\sum_{i=1}^
+{N}(1-\Phi({\bf X}^{(i)})\right)^2/(N-1)$ \ \ \ for \ \ \ $V\{\widehat{Q}\}$}
+\smallskip
+This program attempts to obtain these estimators and, by means of them, the
+relative error too. The network under study is passed to the program as a text
+file with the following format:
+\medskip
+\vbox{
+$<${\bf node} {\it s}$>$
+
+$<${\bf node} {\it t}$>$
+
+$<${\it n}$>$
+
+$<${\it l}$>$
+
+\settabs\+\indent
+& $<${\bf node} {\it n}$>$\quad & $<adj_n>$\quad & $<${\bf node} dest$>$\quad &
+$<${\it rlb} $>$\quad & $<${\bf node} dest$>$\quad & $<${\it rlb}$>$\quad &
+$<${
+\bf node} dest$>$\quad \cr
+
+\+& $<${\bf node} 1$>$ & $<adj_1>$ & $<${\bf node} dest$>$ & $<${\it rlb}$>
+$ & $<${\bf node} dest$>$ & $<${\it rlb}$>$ & $\cdots$\quad \cr
+
+\+& $<${\bf node} 2$>$ & $<adj_2>$ & $<${\bf node} dest$>$ & $<${\it rlb}$>
+$ & $<${\bf node} dest$>$ & $<${\it rlb}$>$ & $\cdots$\quad \cr
+
+\+& $<${\bf node} 3$>$ & $<adj_3>$ & $<${\bf node} dest$>$ & $<${\it rlb}$>
+$ & $<${\bf node} dest$>$ & $<${\it rlb}$>$ & $\cdots$\quad \cr
+
+\+& \ \ \ \ \ \ \ $\vdots$ & \ \ \ \ \ \ $\vdots$ & \ \ \ \ \ \ \ $\vdots$
+& \ \ \ \ $\vdots$ & $\ \ \ \ \ \ \ \vdots$ & \ \ \ \ $\vdots$ \cr
+
+\+& $<${\bf node} {\it n}$>$ & $<adj_n>$ & $<${\bf node} dest$>$ & $<${\it
+rlb}$>$ & $<${\bf node} dest$>$ & $<${\it rlb}$>$ & $\cdots$\quad \cr
+
+}
+\bigskip
+All expressions like $<\ldots>$, are integers numbers. $<${\bf node} {\it s}$>$
+and $<${\bf node} {\it t}$>$ are, respectively, the {\it source} and
+{\it terminal} nodes (to estimate the source--terminal unreliability).
+$<${\it n}$>$ is the number of {\it nodes} and $<${\it l}$>$ the number of {\it
+links}. Every one of the subsequent lines have the following meaning: $<${\bf
+node} $i>$ has a number $<adj_i>$ of adjacent nodes, each one of them
+identified
+by the correponding number ($<${\bf node} dest$>$) followed by its single
+reliability value ($<${\it rlb}$>$).
+
+
+
+
+\N{1}{1}The program general structure. The whole program is shown as a set of
+sections, each one of them is introduced in the following items.
+
+\Y\B\X2:Library Headers and Included Files\X;\6
+\X4:New Type Definition and Global Variables\X;\6
+\X5:Prototypes of Auxiliary Functions\X;\7
+\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,]){}$\1\1%
+\2\2\6
+${}\{{}$\1\6
+\X6:Local Variables of \PB{\\{main}(\,)}\X;\6
+\X7:Input Data Validation\X;\6
+\X8:Crude Monte Carlo Algorithm\X;\6
+\X9:Print of Output\X;\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\7
+\X10:Auxiliary Functions\X;\par
+\fi
+
+\M{2}
+At the top, the inclusions are as usual, mostly to allow the use of
+input-output and mathematical functions. The most remarkable files are the
+library {\tt time.h} to make use of functions to measure the execution time and
+{\tt mt19937ar.c}, the code of the Mersenne Twister random numbers generator.
+\Y\B\4\X2:Library Headers and Included Files\X${}\E{}$\6
+\8\#\&{include} \.{<stdio.h>}\6
+\8\#\&{include} \.{<stdlib.h>}\6
+\8\#\&{include} \.{<math.h>}\6
+\8\#\&{include} \.{<time.h>}\6
+\8\#\&{include} \.{"mt19937ar.c"}\par
+\U1.\fi
+
+\M{3}
+For clarification, single random numbers from the Mersenne Twister are called
+\PB{\|U}.
+\Y\B\4\D$\|U$ \5
+\\{genrand\_real1}(\,)\SHC{ a single random number (from the Mersenne Twister)
+}\par
+\fi
+
+\M{4}
+Some structures are to be allocated: one unit of {\bf struct link} for every
+link and one unit of {\bf struct network} for the whole network. In the input
+file from which the network topolgy is loaded, the nodes are enumerated from 1
+to \PB{\\{numnodes}}. The adjacency list of the graph (network) makes use of
+these
+numbers. Such adjacency lists are rebuilt every time a new state is sampled for
+every link, and the latest version of the adjacency lists is used by the
+algorithms to determine whether nodes \PB{\|s} and \PB{\|t} are connected.
+\Y\B\4\X4:New Type Definition and Global Variables\X${}\E{}$\6
+\&{typedef} \&{struct} \&{link} ${}\{{}$\1\6
+\&{int} \\{adj};\SHC{1 or 0 to build the adjacency martix of the network }\6
+\&{double} \\{rlb};\SHC{single link reliability }\6
+\&{int} \\{smp};\SHC{1 or 0 to build the adjacency matrix of the network, after
+random fail }\2\6
+${}\}{}$ \&{lnk}${},{}$  ${}{*}\&{pt\_lnk};{}$\6
+\&{typedef} \&{struct} \&{network} ${}\{{}$\1\6
+\&{int} \|s;\SHC{source node }\6
+\&{int} \|t;\SHC{target node }\6
+\&{int} \\{numnodes};\SHC{number of nodes }\6
+\&{int} \\{numlinks};\SHC{number of links }\6
+\&{struct} \&{link} ${}{*}{*}\|I{}$;\SHC{matrix of links, size:
+I[numnodes+1][numnodes+1] (I[0][0], unused) }\2\6
+${}\}{}$ \&{net}${},{}$  ${}{*}\&{pt\_net};{}$\6
+\&{int} ${}{*}{*}\\{list}{}$;\SHC{matrix to perform as "list" of "adjacency
+lists" }\6
+\&{int} ${}{*}\\{visited}{}$;\SHC{array to keep track of the visited nodes in
+the DFS }\6
+\&{int} \\{connected};\SHC{1 if there is a path connecting "s" and "t" and 0
+otherwise }\6
+\&{int} \\{seed};\SHC{seed for the random numbers generator Mersenne Twister }%
+\par
+\U1.\fi
+
+\M{5}
+All functions and algorithms deal with a network whose topolgy is passed to the
+program as the argument \PB{\\{argv}[\T{1}]} of the \PB{\\{main}(\,)}. This
+argument is the name
+of a file that is finally passed to the function \PB{\\{Initialize}} as the
+argument
+\PB{\\{filename}}. Function \PB{\\{Initialize}} allocates one unit of a {\bf
+struct network}
+and returns a pointer to it. This pointer is taken as the argument by all the
+other functions, namely: \PB{\|X(\,)}, \PB{\\{Fail}(\,)}, \PB{\.{DFS}(\,)} and %
+\PB{\\{Phi}(\,)}. All these
+functions are thought to operate this way: \PB{\|X(\,)} sets a random state on
+every
+link by means of a numerical value, if 0, the link is removed from the network,
+if 1, the link remains untouched; \PB{\\{Fail}(\,)} sets a random state on
+every link;
+\PB{\.{DFS}(\,)} performs a Depth First Search starting from node \PB{\|s} and
+tells \PB{\\{Phi}(\,)}
+whether node \PB{\|t} is reached or not, if node \PB{\|t} is reached \PB{%
+\\{Phi}(\,)} returns 1,
+otherwise it returns 0.
+\Y\B\4\X5:Prototypes of Auxiliary Functions\X${}\E{}$\6
+\&{pt\_net} \\{Initialize}(\&{char} ${}{*}\\{filename}){}$;\SHC{allocates a
+network associated to the info in file \PB{\\{filename}} }\6
+\&{int} \|X(\&{int} \\{node1}${},\39{}$\&{int} \\{node2}${},\39{}$\&{pt\_net} %
+\\{nt});\SHC{returns 1 if link \PB{\\{node1}}--\PB{\\{node2}} is operative, 0
+otherwise }\6
+\&{void} \\{Fail}(\&{pt\_net} \\{nt});\SHC{set link random fails and builds the
+adjacency lists after that fail }\6
+\&{void} \.{DFS}(\&{int} \\{node}${},\39{}$\&{pt\_net} \\{nt});\SHC{performs
+DFS from node \PB{\|s}, stops when node \PB{\|t} is reached }\6
+\&{int} \\{Phi}(\&{pt\_net} \\{nt});\SHC{returns 1 if \PB{\|s} and \PB{\|t} are
+connected and 0 otherwise }\par
+\U1.\fi
+
+\M{6}
+Function \PB{\\{main}(\,)} makes use of many local variables, none of which
+deserve a
+particular explanation. Most of them operate as indexes and as memory units to
+retain some values during mathematical calculation. \PB{\|n} is a pointer to
+the
+network under study. \PB{\\{ti}} receives the value of function \PB{\\{clock}(%
+\,)} (library
+{\tt time.h}). Function \PB{\\{clock}(\,)} returns the elapsed time since the
+beginning
+of the execution.
+\Y\B\4\X6:Local Variables of \PB{\\{main}(\,)}\X${}\E{}$\6
+\&{int} \|i${},{}$ \|j${},{}$ \|k${},{}$ \|S${},{}$ \\{size};\6
+\&{double} \|X${},{}$ \|V${},{}$ \|Q${},{}$ \|t;\6
+\&{pt\_net} \|n;\6
+\&{clock\_t} \\{ti};\par
+\U1.\fi
+
+\M{7}
+The program accepts input data at the command line. If compilation is such that
+{\tt crude1} is the name of the executable, the program runs as:
+\smallskip
+\centerline{\tt ./crude1 <File> <Size> <Seed>}
+\smallskip
+where {\tt<File>} is the text file with the network topolgy info, {\tt<Size>}
+the number of Monte Carlo trials and {\tt<Seed>} the value to set the starting
+point of the random numbers generator (Mersenne Twister). Some validation on
+these data is aimed to check: the number of inputs to be not less, and not more
+than three, the value of {\tt<Size>} expecting that is not less than one and
+the
+{\tt<Seed>}, restricting it to positive values.
+\Y\B\4\X7:Input Data Validation\X${}\E{}$\6
+\&{if} ${}(\\{argc}<\T{4}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Some\ input\ data\ }\)\.{is\ missing!\ Run\ as:\\}\)%
+\.{n"});\6
+\\{printf}(\.{"\\n\ ./executable\ <Fi}\)\.{le>\ <Size>\ <Seed>\\n\\}\)\.{n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{argc}>\T{4}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ You've\ entered\ m}\)\.{ore\ data\ than\ necess}\)\.{ary!\
+Run\ as:\\n\\n"});\6
+\\{printf}(\.{"\\n\ ./executable\ <Fi}\)\.{le>\ <Size>\ <Seed>\\n\\}\)\.{n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{if} ${}((\\{size}\K\\{atoi}(\\{argv}[\T{2}]))<\T{1}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ The\ number\ of\ tr}\)\.{ials\ can\ not\ be\ less}\)\.{\
+than\ 1!\ Run\ as:\\n"});\6
+\\{printf}(\.{"\\n\ ./executable\ <Fi}\)\.{le>\ <Size>\ <Seed>\\n\\}\)\.{n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{if} ${}((\\{seed}\K\\{atoi}(\\{argv}[\T{3}]))<\T{0}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ The\ seed\ can\ not}\)\.{\ be\ negative!\ Run\ as}\)\.{:%
+\\n"});\6
+\\{printf}(\.{"\\n\ ./executable\ <Fi}\)\.{le>\ <Size>\ <Seed>\\n\\}\)\.{n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\par
+\U1.\fi
+
+\M{8}
+As explained in the introduction, the core of this program is a very simple
+algorithm, aimed to repeat a number \PB{\\{size}} of times a cycle in which
+function
+\PB{\\{Fail}(\,)} sets a random value of either 0 or 1 to every link; after
+this,
+function \PB{\\{Phi}(\,)} returns 1 if nodes \PB{\|s} and \PB{\|t} are
+connected and 0 otherwise.
+Accumulation of the complement of the value of \PB{\\{Phi}(\,)}, and its
+square, let
+the estimation of the unreliability \PB{\|Q} and its corresponding variance %
+\PB{\|V} be
+done. \PB{\\{ti}} saves the value of the function \PB{\\{clock}(\,)} just
+before the algorithm
+starts, and after completion of the run \PB{\\{ti}} is subtracted from the
+current
+value of \PB{\\{clock}(\,)}. Such difference is the execution time of the
+algorithm (note
+that the initialization process time is not considered).
+\Y\B\4\X8:Crude Monte Carlo Algorithm\X${}\E{}$\6
+$\|n\K\\{Initialize}(\\{argv}[\T{1}]);{}$\6
+${}\\{ti}\K\\{clock}(\,);{}$\6
+${}\|S\K\T{0};{}$\6
+${}\|X\K\T{0.0};{}$\6
+${}\|V\K\T{0.0};{}$\6
+\&{for} ${}(\|k\K\T{0};{}$ ${}\|k<\\{size};{}$ ${}\|k\PP){}$\5
+${}\{{}$\1\6
+\\{Fail}(\|n);\6
+${}\|X\K(\T{1}-\\{Phi}(\|n));{}$\6
+${}\|S\MRL{+{\K}}\|X;{}$\6
+${}\|V\MRL{+{\K}}\|X*\|X;{}$\6
+\4${}\}{}$\2\6
+${}\|Q\K{}$(\&{double}) \|S${}/\\{size};{}$\6
+${}\|V\K(\|V/\\{size}-\|Q*\|Q)/(\\{size}-\T{1});{}$\6
+${}\|t\K(\&{double})(\\{clock}(\,)-\\{ti})/\.{CLOCKS\_PER\_SEC}{}$;\par
+\U1.\fi
+
+\M{9}
+The reason why this version is called ``{\tt(1)}'' will be revealed with the
+advent of versions {\tt(2)} and {\tt(3)}$\ldots$ At the moment it's enough to
+say that this is the simplest version (at least the simplest out of the three)
+to implement the basis of the Crude Monte Carlo algorithm for the estimation of
+network unreliability, \PB{\|Q}. The main output is therefore the value of \PB{%
+\|Q}. This
+value is shown toghether with the name of the network under study, the number
+of
+Monte Carlo replications, the execution time in seconds, the variance \PB{\|V},
+the
+standard deviation $V^{1/2}$ and the relative error $V^{1/2}/Q$.
+\Y\B\4\X9:Print of Output\X${}\E{}$\6
+$\\{printf}(\.{"\\n\ \ Network:\ \%s\ \ \ R}\)\.{eplications:\ \%d\ \ \ Ex}\)%
+\.{ecTime=\%f"},\39\\{argv}[\T{1}],\39\\{size},\39\|t);{}$\6
+\\{printf}(\.{"\\n\ \ ***************}\)\.{****\ CRUDE\ MONTE\ CAR}\)\.{LO\ (1)%
+\ *************}\)\.{*****"});\6
+${}\\{printf}(\.{"\\n\ \ \ \ \ \ \ Unreliabil}\)\.{ity\ \ \ \ Q\ =\ \%1.16f\ =\
+}\)\.{\%1.2e"},\39\|Q,\39\|Q);{}$\6
+${}\\{printf}(\.{"\\n\ \ \ \ \ \ \ Variance\ \ }\)\.{\ \ \ \ \ \ \ V\ =\ %
+\%1.16f\ =\ }\)\.{\%1.2e"},\39\|V,\39\|V);{}$\6
+${}\\{printf}(\.{"\\n\ \ \ \ \ \ \ Std.\ Dev.\ }\)\.{\ \ \ \ \ \ SD\ =\ \%1.16f%
+\ =\ }\)\.{\%1.2e"},\39\\{sqrt}(\|V),\39\\{sqrt}(\|V));{}$\6
+${}\\{printf}(\.{"\\n\ \ \ \ \ \ \ Relative\ E}\)\.{rror\ \ RE\ =\ \%1.16f\ =\
+}\)\.{\%1.2f\%\%"},\39\\{sqrt}(\|V)/\|Q,\39\T{100}*\\{sqrt}(\|V)/\|Q);{}$\6
+\\{printf}(\.{"\\n\ \ ***************}\)\.{********************}\)%
+\.{********************}\)\.{*****\\n\\n"});\par
+\U1.\fi
+
+\N{1}{10}The set of Auxiliary Functions. These functions provide support to
+implement
+the main operations required by the program. They are shown here, classified in
+three sections, each one of them containing code clearly associated to the name
+given to it.
+\Y\B\4\X10:Auxiliary Functions\X${}\E{}$\6
+\X11:Initialization\X;\6
+\X12:Fail Generation\X;\6
+\X13:Function of Structure\X;\par
+\U1.\fi
+
+\M{11}
+Function \PB{\\{Initialize}(\,)} builds up and allocates the network data
+structure
+\PB{\&{net}} with information read from the file that holds the network data
+(\PB{\\{filename}}). It also initializes the random numbers generator Mersenne
+Twister.
+\Y\B\4\X11:Initialization\X${}\E{}$\6
+\&{pt\_net} \\{Initialize}(\&{char} ${}{*}\\{filename}){}$\1\1\2\2\6
+${}\{{}$\1\6
+\&{pt\_net} \\{pt\_n};\6
+\&{FILE} ${}{*}\\{fp};{}$\6
+\&{int} \|i${},{}$ \|j${},{}$ \\{node1}${},{}$ \\{node2}${},{}$ \\{num};\6
+\&{double} \\{reliability};\6
+\,\SHC{Allocate one unit of the structure \PB{\&{net}} to hold the network
+info }\7
+\&{if} ${}((\\{pt\_n}\K{}$(\&{pt\_net}) \\{calloc}${}(\T{1},\39\&{sizeof}(%
+\&{net})))\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\6
+\,\SHC{Open the file with the network info and scan for the source and target
+}\6
+\,\SHC{node, the number of nodes and the number of links at the top of it }\2\6
+\&{if} ${}((\\{fp}\K\\{fopen}(\\{filename},\39\.{"r"}))\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ open\ a\ disk\ file.}\)\.{..%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d"},\39{\AND}\\{pt\_n}\MG\|s);{}$\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d"},\39{\AND}\\{pt\_n}\MG\|t);{}$\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d"},\39{\AND}\\{pt\_n}\MG\\{numnodes});{}$\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d"},\39{\AND}\\{pt\_n}\MG\\{numlinks}){}$;%
+\SHC{Allocate matrix I with a size of (numnodes+1)*(numnodes+1), and link it
+to }\SHC{the corresponding pointer of network net }\6
+\&{if} ${}((\\{pt\_n}\MG\|I\K{}$(\&{pt\_lnk} ${}{*}){}$ \\{calloc}${}(\\{pt\_n}%
+\MG\\{numnodes}+\T{1},\39{}$\&{sizeof}(\&{struct} \&{link} ${}{*})))\E\NULL){}$%
+\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{for} ${}(\|i\K\T{0};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{pt\_n}\MG\|I[\|i]\K{}$(\&{pt\_lnk}) \\{calloc}${}(\\{pt\_n}\MG%
+\\{numnodes}+\T{1},\39{}$\&{sizeof}(\&{struct} \&{link})))${}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\4${}\}{}$\6
+\,\SHC{Initialize matrix I with 0s for the adjacencies and 0.0s for the }\6
+\,\SHC{reliabilities of every link }\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\1%
+\6
+\&{for} ${}(\|j\K\T{1};{}$ ${}\|j\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|j\PP){}$\5
+${}\{{}$\1\6
+${}\\{pt\_n}\MG\|I[\|i][\|j].\\{adj}\K\T{0};{}$\6
+${}\\{pt\_n}\MG\|I[\|i][\|j].\\{rlb}\K\T{0.0};{}$\6
+${}\\{pt\_n}\MG\|I[\|i][\|j].\\{smp}\K\T{0};{}$\6
+\4${}\}{}$\6
+\,\SHC{Load matrix I values from the file with the network info and set the }\6
+\,\SHC{corresponding values of adjacency and reliability }\2\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d\%d"},\39{\AND}\\{node1},\39{\AND}\\{num});{}$\6
+\&{for} ${}(\|j\K\T{1};{}$ ${}\|j\Z\\{num};{}$ ${}\|j\PP){}$\5
+${}\{{}$\1\6
+${}\\{fscanf}(\\{fp},\39\.{"\%d\%lf"},\39{\AND}\\{node2},\39{\AND}%
+\\{reliability});{}$\6
+${}\\{pt\_n}\MG\|I[\\{node1}][\\{node2}].\\{adj}\K\T{1};{}$\6
+${}\\{pt\_n}\MG\|I[\\{node1}][\\{node2}].\\{rlb}\K\\{reliability};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{fclose}(\\{fp});\6
+\,\SHC{Take the \PB{\\{seed}} value and initialize the pseudorandom numbers
+generator }\6
+\,\SHC{Mersenne Twister }\6
+\\{init\_genrand}(\\{seed});\6
+\,\SHC{Allocate matrix \PB{\\{list}} of size (numnodes+1)*(numnodes+1), same as
+matrix I }\6
+\&{if} ${}((\\{list}\K{}$(\&{int} ${}{*}{*}){}$ \\{calloc}${}(\\{pt\_n}\MG%
+\\{numnodes}+\T{1},\39{}$\&{sizeof}(\&{int} ${}{*})))\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{for} ${}(\|i\K\T{0};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{list}[\|i]\K{}$(\&{int} ${}{*}){}$ \\{calloc}${}(\\{pt\_n}\MG%
+\\{numnodes},\39\&{sizeof}(\&{int})))\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\4${}\}{}$\6
+\,\SHC{Initialize matrix \PB{\\{list}}, filling it with 0s }\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\1%
+\6
+\&{for} ${}(\|j\K\T{1};{}$ ${}\|j\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|j\PP){}$\5
+${}\{{}$\1\6
+${}\\{list}[\|i][\|j]\K\T{0};{}$\6
+\4${}\}{}$\6
+\,\SHC{Allocate the \PB{\\{visited}} array and set 0 for all nodes (not
+visited) }\2\2\6
+\&{if} ${}((\\{visited}\K{}$(\&{int} ${}{*}){}$ \\{calloc}${}(\\{pt\_n}\MG%
+\\{numnodes},\39\&{sizeof}(\&{int})))\E\NULL){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n\ Fail\ attempting\ }\)\.{to\ allocate\ memory..}\)\.{.%
+\\n"});\6
+\\{exit}(\T{1});\6
+\4${}\}{}$\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{pt\_n}\MG\\{numnodes};{}$ ${}\|i\PP){}$\1%
+\5
+${}\\{visited}[\|i]\K\T{0};{}$\2\6
+${}\\{connected}\K\T{0};{}$\6
+\&{return} \\{pt\_n};\6
+\4${}\}{}$\2\par
+\U10.\fi
+
+\M{12}
+Depending on the probability distribution of the link between \PB{\\{node}%
+\T{1}} and
+\PB{\\{node}\T{2}}, function \PB{\|X(\,)} returns 1 if such link is operative
+and 0 otherwise. It
+is accepted that function \PB{\|X(\,)} is only required for links that
+actuallly exist,
+i.e. links for which \PB{$\|I[\\{node1}][\\{node2}].\\{adj}\K\T{1}$}.
+
+Function \PB{\\{Fail}(\,)} sets a random value of 0 or 1 in \PB{\\{smp}} for
+every existing link
+of network \PB{\\{nt}}. This way, a randomly failed network is built up and
+saved
+into matrix \PB{$\|I[\,][\,].\\{smp}$} and also in \PB{\\{list}[\,][\,]}. It is
+accepeted that the network
+graph is undirected and that the reliability of every link has the same value
+in
+both directions. It is therefore unnecesary to sample all the matrix elements,
+it suffices to do it for all the elements above the diagonal and to set the
+same
+value to the simetric element (the diagonal elements are all 0).
+
+\Y\B\4\X12:Fail Generation\X${}\E{}$\6
+\&{int} \|X(\&{int} \\{node1}${},\39{}$\&{int} \\{node2}${},\39{}$\&{pt\_net} %
+\\{nt})\1\1\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\|U<\\{nt}\MG\|I[\\{node1}][\\{node2}].\\{rlb}){}$\1\5
+\&{return} \T{1};\2\6
+\&{else}\1\5
+\&{return} \T{0};\2\6
+\4${}\}{}$\2\7
+\&{void} \\{Fail}(\&{pt\_net} \\{nt})\1\1\2\2\6
+${}\{{}$\1\6
+\&{int} \|i${},{}$ \|j${},{}$ \|k;\7
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{nt}\MG\\{numnodes};{}$ ${}\|i\PP){}$\1\6
+\&{for} ${}(\|j\K\|i+\T{1};{}$ ${}\|j\Z\\{nt}\MG\\{numnodes};{}$ ${}\|j\PP){}$%
+\1\6
+\&{if} ${}(\\{nt}\MG\|I[\|i][\|j].\\{adj}){}$\5
+${}\{{}$\1\6
+${}\\{nt}\MG\|I[\|i][\|j].\\{smp}\K(\\{nt}\MG\|I[\|i][\|j].\\{adj}\W\|X(\|i,\39%
+\|j,\39\\{nt}));{}$\6
+${}\\{nt}\MG\|I[\|j][\|i].\\{smp}\K\\{nt}\MG\|I[\|i][\|j].\\{smp};{}$\6
+\4${}\}{}$\2\2\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{nt}\MG\\{numnodes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\SHC{Clean the prior adjacency lists }\1\6
+${}\|k\K\T{1};{}$\6
+\&{while} ${}(\\{list}[\|i][\|k]>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{list}[\|i][\|k\PP]\K\T{0};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{for} ${}(\|i\K\T{1};{}$ ${}\|i\Z\\{nt}\MG\\{numnodes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\SHC{Create the new adjacency lists }\1\6
+${}\|k\K\T{1};{}$\6
+\&{for} ${}(\|j\K\T{1};{}$ ${}\|j\Z\\{nt}\MG\\{numnodes};{}$ ${}\|j\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{nt}\MG\|I[\|i][\|j].\\{smp}){}$\5
+${}\{{}$\1\6
+${}\\{list}[\|i][\|k\PP]\K\|j;{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{return};\6
+\4${}\}{}$\2\par
+\U10.\fi
+
+\M{13}
+Functions \PB{\\{Phi}(\,)} and \PB{\.{DFS}(\,)} both update the value of
+variable \PB{\\{connected}}.
+\PB{\\{Phi}(\,)} sets it to 0 (as an indication that there is no path of
+operative links
+between node \PB{\|s} and \PB{\|t}). It also assumes that no node has been
+visited by the
+Depth First Search yet. Then it calls \PB{\.{DFS}(\,)} that, starting frome
+node \PB{\|s} sets
+\PB{\\{connected}} to 1 and stop if there is a path of operative links between
+nodes
+\PB{\|s} and \PB{\|t}, and does nothing if there is not such path.
+\Y\B\4\X13:Function of Structure\X${}\E{}$\6
+\&{int} \\{Phi}(\&{pt\_net} \\{nt})\1\1\2\2\6
+${}\{{}$\1\6
+\&{int} \|k;\7
+${}\\{connected}\K\T{0};{}$\6
+\&{for} ${}(\|k\K\T{1};{}$ ${}\|k\Z\\{nt}\MG\\{numnodes};{}$ ${}\|k\PP){}$\1\5
+${}\\{visited}[\|k]\K\T{0}{}$;\6
+\,\SHC{DFS() makes a Depth First Search from node \PB{\|s} and: }\6
+\,\SHC{- returns 1 if node \PB{\|t} is reached }\6
+\,\SHC{- returns 0 if node \PB{\|t} is not reached }\2\6
+${}\.{DFS}(\\{nt}\MG\|s,\39\\{nt});{}$\6
+\&{return} \\{connected};\6
+\4${}\}{}$\2\7
+\&{void} \.{DFS}(\&{int} \\{node}${},\39{}$\&{pt\_net} \\{nt})\1\1\2\2\6
+${}\{{}$\1\6
+\&{int} \|k;\7
+\&{if} (\\{connected})\1\5
+\&{return};\2\6
+\&{if} ${}(\\{node}\E\\{nt}\MG\|t){}$\5
+${}\{{}$\1\6
+${}\\{connected}\K\T{1};{}$\6
+\&{return};\6
+\4${}\}{}$\2\6
+${}\\{visited}[\\{node}]\K\T{1};{}$\6
+${}\|k\K\T{1};{}$\6
+\&{while} ${}(\\{list}[\\{node}][\|k]>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{visited}[\\{list}[\\{node}][\|k]]){}$\1\5
+${}\.{DFS}(\\{list}[\\{node}][\|k],\39\\{nt});{}$\2\6
+${}\|k\PP;{}$\6
+\4${}\}{}$\2\6
+\&{return};\6
+\4${}\}{}$\2\par
+\U10.\fi
+
+\N{1}{14}Index.
+
+\fi
+
+
+\inx
+\fin
+\con

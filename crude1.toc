@@ -1,0 +1,6 @@
+\catcode `\@=11\relax 
+\ZZ {The program general structure}{1}{1}{2}{}
+\ZZ {The set of Auxiliary Functions}{1}{10}{6}{}
+\ZZ {Index}{1}{14}{11}{}
+
+\catcode `\@=12\relax 
