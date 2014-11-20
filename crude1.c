@@ -58,6 +58,7 @@ int seed;
 double breadth = 2.0;
 double l;
 double beta;
+int indicator;
 
 
 /*:4*/
@@ -91,8 +92,8 @@ int main(int argc,char*argv[])
 #line 235 "./crude1.w"
 
 /*Start of actual implementation*/
-	int i,j,k,size, S;
-	double X,V,Q,t;
+	int i,j,k,size,X;
+	double V,Q,t,S;
 	pt_net n;
 	clock_t ti;
 
@@ -136,7 +137,7 @@ int main(int argc,char*argv[])
 /*minimum cut set in relation to nodes in network -> how critical is the min cut set in relation to overall network size?*/
 	ti= clock();
 
-	S= 0;
+	S= 0.0;
 	X= 0.0;
 	V= 0.0;
 /* start of monte carlo logic*/
@@ -145,23 +146,23 @@ int main(int argc,char*argv[])
 		l = 1.0;
 /* set link random fails and builds the adjacency lists after that fail */
 		Fail(n);
+
 /* Phi: if node t is reached Phi ( ) returns 1, otherwise it returns 0 */
 /* Deviation metric*/
 		X= (1-Phi(n));
-/*s is indicating the success*/
-//		S+= l;
-		S+= X;
-/*Total Variance*/
-//		V+= l*l;
-		V+= X*X;
+		if (X==1){
+			S+=l;
+		}
+		V+= l*l;
+		//		V+= X*X;
 	}
 /* compare successes to size as number of monte carlo trials*/
+/* sum/N*/
 	Q= (double)S/size;
 /*estimator of the variance*/
 	V= (V/size-Q*Q)/(size-1);
 
 	t= (double)(clock()-ti)/CLOCKS_PER_SEC;
-
 
 
 /*:8*/
@@ -230,7 +231,7 @@ pt_net Initialize(char*filename){
 	}
 
 	/* relation of min cut set to network size */
-	beta = breadth/pt_n->numnodes;
+		beta = breadth/pt_n->numnodes;
 
 	for(i= 1;i<=pt_n->numnodes;i++)
 		for(j= 1;j<=pt_n->numnodes;j++){
@@ -280,6 +281,9 @@ pt_net Initialize(char*filename){
 
 			connected= 0;
 
+
+
+
 			return pt_n;
 		}
 
@@ -292,14 +296,17 @@ pt_net Initialize(char*filename){
 		int X(int node1,int node2,pt_net nt){
 		/* returns 1 if link node1 –node2 is operative, 0 otherwise */
 			double tempL;
-			if(U<nt->I[node1][node2].rlb){
-				tempL = (1-nt->I[node1][node2].rlb)/beta;
+			double epsilon;
+			if(U<beta){
+				tempL = epsilon/beta;
 				l *= tempL;
-				return 1;}
-				else{
-					return 0;}
-
-				}
+				return 1;
+			}else{
+				tempL = (1-epsilon)/(1-beta);
+				l *= tempL;
+				return 0;
+			}
+		}
 
 				void Fail(pt_net nt){
 
