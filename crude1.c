@@ -235,7 +235,8 @@ pt_net Initialize(char*filename){
 	}
 
 	/* relation of min cut set to network size */
-		beta = breadth/pt_n->numnodes;
+		//beta = breadth/pt_n->numnodes;
+		beta = 0.5;
 
 	for(i= 1;i<=pt_n->numnodes;i++)
 		for(j= 1;j<=pt_n->numnodes;j++){
@@ -303,12 +304,13 @@ pt_net Initialize(char*filename){
 			double epsilon;
 			epsilon = 1-nt->I[node1][node2].rlb;
 			if(U<beta){
-				tempL = epsilon/beta;
+								tempL = (1-epsilon)/(1-beta);
+
 				l *= tempL;
 				return 1;
 			}else{
-				//tempL = (1-epsilon)/(1-beta);
-				//l *= tempL;
+								tempL = epsilon/beta;
+				l *= tempL;
 				return 0;
 			}
 		}
