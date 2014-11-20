@@ -140,10 +140,12 @@ int main(int argc,char*argv[])
 	S= 0.0;
 	X= 0.0;
 	V= 0.0;
+
 /* start of monte carlo logic*/
 	for(k= 0;k<size;k++){
 /* reset l for current monte carlo trial*/
-		l = 1.0;
+			l = 1.0;
+
 /* set link random fails and builds the adjacency lists after that fail */
 		Fail(n);
 
@@ -152,6 +154,7 @@ int main(int argc,char*argv[])
 		X= (1-Phi(n));
 		if (X==1){
 			S+=l;
+			indicator++;
 		}
 		V+= l*l;
 		//		V+= X*X;
@@ -175,6 +178,7 @@ int main(int argc,char*argv[])
 	printf("\n  Network: %s   Replications: %d   ExecTime=%f",argv[1],size,t);
 	printf("\n  ******************* CRUDE MONTE CARLO (1) ******************");
 	printf("\n       Unreliability    Q = %1.16f = %1.2e",Q,Q);
+	printf("\n       Success    	S = %d",indicator);
 	printf("\n       Variance         V = %1.16f = %1.2e",V,V);
 	printf("\n       Std. Dev.       SD = %1.16f = %1.2e",sqrt(V),sqrt(V));
 	printf("\n       Relative Error  RE = %1.16f = %1.2f%%",sqrt(V)/Q,
@@ -297,13 +301,14 @@ pt_net Initialize(char*filename){
 		/* returns 1 if link node1 –node2 is operative, 0 otherwise */
 			double tempL;
 			double epsilon;
+			epsilon = 1-nt->I[node1][node2].rlb;
 			if(U<beta){
 				tempL = epsilon/beta;
 				l *= tempL;
 				return 1;
 			}else{
-				tempL = (1-epsilon)/(1-beta);
-				l *= tempL;
+				//tempL = (1-epsilon)/(1-beta);
+				//l *= tempL;
 				return 0;
 			}
 		}
