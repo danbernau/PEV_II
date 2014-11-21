@@ -154,8 +154,8 @@ int main(int argc,char*argv[])
 		if (X == 1){
 			S+=l;		
 			indicator++;
-			V+= l*l;
 		}
+		V+= l*l;
 		//V+= X*X;
 	}
 /* compare successes to size as number of monte carlo trials*/
